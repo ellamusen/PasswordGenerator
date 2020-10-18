@@ -3,27 +3,28 @@
 
 # Generates a random password for the user
 
-# Demands:
-# Parameters
-# [X] Ask the user how long they want their password to be (length)
-# [X] Have a mix of upper and lowercase letters, as well as numbers and symbols (charset)
-# [] Error if all parameters are "no" - user has to choose at least one!
-
-# Other factors
-# [] The password should be a minimum of 6 characters long
-# [] Generate a sentence to remember password
-# [] Make generate method
-# https://dev.to/spaceofmiah/generating-random-password-in-python-practical-guide-amd
-
-# Define function
+# Define method
 def get_password_length():
-    # Prompt user to enter number of digits in integers
-    length = int(input("How many digits do you want your password to be?: "))
-    # Returning data, so that it will be possible to user elsewhere
-    return int(length)
+    # Try to convert length to int
+    try:
+        # Prompt user to enter number of digits in integers
+        length = int(input("How many digits do you want your password to be?: "))
+        # Display chosen length and prompt user to confirm
+        # str(length) = We are putting an int in a str
+        confirmed = input("Confirm length: " + str(length) + " (Yes/No): ")
+        # If user doesn't confirm, call method again
+        if confirmed.upper() != "YES":
+            get_password_length()
+        # Returning data, so that it will be possible to use elsewhere
+        return int(length)
+
+    # Handle value-error exception
+    except ValueError:
+        print("Please enter a number")
+        get_password_length()
 
 
-# Define function
+# Define method
 def get_charset():
     charset_alphabet_lowercase = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
                                   "r", "s", "t", "u", "v", "w", "x", "y", "z", "æ", "ø", "å"]  # List
@@ -36,10 +37,10 @@ def get_charset():
     # Prompt user to enter preferences in password as a string
     choose_alphabet_lowercase = str(input("Use lowercase characters? (Yes/No): "))
     choose_alphabet_uppercase = str(input("Use uppercase characters? (Yes/No): "))
-    choose_numeric = input("Use numbers? (Yes/No): ")
-    choose_symbols = input("Use symbols? (Yes/No): ")
+    choose_numeric = str(input("Use numbers? (Yes/No): "))
+    choose_symbols = str(input("Use symbols? (Yes/No): "))
 
-    # If statements = if chosen, then extend charset (chosen charset = [], line 34) with selected charsets (line 28-34)
+    # If statements = if chosen, then extend charset (chosen charset = [], line X) with selected charsets (line X-X)
     # Change any characters the user types to uppercase (.upper), to give user more freedom in reference to characters
     if choose_alphabet_lowercase.upper() == "YES":
         chosen_charset.extend(charset_alphabet_lowercase)
@@ -50,11 +51,39 @@ def get_charset():
     if choose_symbols.upper() == "YES":
         chosen_charset.extend(charset_symbols)
 
-    # Display chosen charsets to user
-    print("Chosen charset: ")
-    # Print and display the extended list
-    print(chosen_charset)
+    # Display the chosen charsets
+    print("You have chosen following")
+    print("Lowercase: " + choose_alphabet_lowercase)
+    print("Uppercase: " + choose_alphabet_uppercase)
+    print("Numeric: " + choose_numeric)
+    print("Symbols: " + choose_symbols)
+    # Prompt user to confirm chosen charsets
+    confirmed = input("Confirm chosen charsets (Yes/No): ")
+    # If user doesn't confirm, call method again
+    if confirmed.upper() != "YES":
+        get_charset()
+
+    # Return charset list
+    return chosen_charset
 
 
-# Call function to run code inside function
-get_charset()
+def generator(list, length):  # list, length = parameters
+    from random import randint  # randint = function that generates random integer between a and b
+    # Randomize charset with length
+    password = ""  # Initialize a password / A value-holder for the values generated in the for-loop
+    for i in range(length):  # From 0 to password length, do: ...
+        randomint = randint(0, len(list)-1)  # Randint generating a random int fra 0 to length of list
+        password += str(list[randomint])  # Append generated character to password (value-holder)
+    # Return password
+    return password
+
+
+# Call method to run code inside function
+length = get_password_length()
+charset = get_charset()
+
+# Display the generated password to user  # end="" = remove new line
+print("Your password is: ", end="")
+# Display the generated password to user
+print(generator(charset, length))
+
